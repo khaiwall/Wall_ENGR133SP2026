@@ -1,18 +1,18 @@
 """
 Course Number: ENGR 13300
-Semester: e.g. Spring 2026
+Semester: Spring 2026
 
 Description:
-    Replace this line with a description of your program.
+  Will calculate the total capacatance of a capacator 
 
 Assignment Information:
-    Assignment:    PythonPreTask00 
-    Team ID:        LC001 Team 7
-    Author:         Khai Wall, wall64@purdue.edu
-    Date:           01/20/2026
+    Assignment:     Python01 Individual Task 2
+    Team ID:        001
+    Author:         Khai Wall wall64@purdue.edu
+    Date:           1/25/2026
 
 Contributors:
-    None
+    Name, login@purdue [repeat for each]
 
     My contributor(s) helped me:
     [ ] understand the assignment expectations without
@@ -30,18 +30,27 @@ Academic Integrity Statement:
     another student access to my code.  The project I am
     submitting is my own original work.
 """
+
+
 import math
 
-
 def main():
-
-    a = 101
-    b = 7
-    c = 12.34
-    print(round((c**2) - math.pow(math.sin(b), 2), 3))
-    print(round(math.factorial(b)*(math.cos(math.pi/c)-a), 3))
-    print(round((c**((math.pi)*(math.e))*math.asin((math.sqrt(3))/2))/((a**(math.e))*b), 3))
-
+    
+    userIn = input("Input the capacitance of the first capacitor [\u03bcF]: ")
+    C1 = int(userIn)
+    print("c is: " + str(C1))
+    T = ["Type", "First", "Second", "Total"]
+    C2String = f"{math.pow(math.e,3)*math.sqrt(5):5.1f}"
+    C2 = float(C2String)
+    STotalInverse = (1/C1) + (1/C2)
+    STotal = 1 / STotalInverse
+    PTotal = C1 + C2
+    S = ["Series", f"{C1:5.1f}", f"{C2:5.1f}", f"{STotal:5.1f}"]
+    P = ["Parallel", f"{C1:5.1f}", f"{C2:5.1f}", f"{PTotal:5.1f}"]
+    print(T)
+    print(S)
+    print(P)
+    
 
 if __name__ == "__main__":
     main()
