@@ -1,13 +1,13 @@
 """
 Course Number: ENGR 13300
-Semester: e.g. Spring 2026
+Semester: Spring 2026
 
 Description:
-    Replace this line with a description of your program.
+    Will evaulate different math equations based on the variables we assigned a, b, and c
 
 Assignment Information:
     Assignment:    PythonPreTask00 
-    Team ID:        LC001 Team 7
+    Team ID:        LC001 Team 3
     Author:         Khai Wall, wall64@purdue.edu
     Date:           01/20/2026
 

@@ -6,7 +6,7 @@ Description:
   Will calculate the total capacatance of a capacator 
 
 Assignment Information:
-    Assignment:     Python01 Individual Task 2
+    Assignment:     py1 ind 2
     Team ID:        001
     Author:         Khai Wall wall64@purdue.edu
     Date:           1/25/2026
@@ -37,20 +37,25 @@ import math
 def main():
     
     userIn = input("Input the capacitance of the first capacitor [\u03bcF]: ")
-    C1 = int(userIn)
-    print("c is: " + str(C1))
-    T = ["Type", "First", "Second", "Total"]
-    C2String = f"{math.pow(math.e,3)*math.sqrt(5):5.1f}"
-    C2 = float(C2String)
+    #userIn = 12.241421
+    numUserIn = float(userIn)
+    C1 = numUserIn
+    C2= math.pow(math.e,3)*math.sqrt(5)
     STotalInverse = (1/C1) + (1/C2)
-    STotal = 1 / STotalInverse
-    PTotal = C1 + C2
-    S = ["Series", f"{C1:5.1f}", f"{C2:5.1f}", f"{STotal:5.1f}"]
-    P = ["Parallel", f"{C1:5.1f}", f"{C2:5.1f}", f"{PTotal:5.1f}"]
+    STotal = round(1 / STotalInverse, 1)
+    PTotal = round(C1 + C2,1)
+    C1Answer = round(C1, 1)
+    C2Answer = round(C2, 1)
+    T = f"{'Type':<15}" f"{'First':<11}"f"{'Second':<12}"f"{'Total':>0}"
+    S = f"{'Series':<8}"  f"{C1Answer:>9} \u03bcF" f"{C2Answer:>9} \u03bcF"  f"{STotal:>9} \u03bcF"
+    P = f"{'Parallel':<0}"  f"{C1Answer:>9} \u03bcF" f"{C2Answer:>9} \u03bcF"  f"{PTotal:>9} \u03bcF"
     print(T)
     print(S)
-    print(P)
-    
+    print(P) 
 
 if __name__ == "__main__":
     main()
+
+
+#random comment that has enough characters WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+"     "
