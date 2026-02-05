@@ -8,27 +8,27 @@ import math as m
 
 def main():
     
-    # value = input("Type a number: ")
+    value = input("Type a number: ")
 
-    # intValue = int(value)
+    intValue = int(value)
 
-    # while (intValue != 1):
-    #     if (intValue%2 == 0):
-    #         intValue = intValue/2
+    while (intValue != 1):
+        if (intValue%2 == 0):
+            intValue = intValue/2
 
-    #     else:
-    #         intValue = (3*intValue) + 1
-    #     print(round(intValue))
+        else:
+            intValue = (3*intValue) + 1
+        print(round(intValue))
 
-    for i in range(1,2):
-        myi = i
-        while (i != 1):
-            if (i%2 == 0):
-                i = i/2
+    # for i in range(1,2):
+    #     myi = i
+    #     while (i != 1):
+    #         if (i%2 == 0):
+    #             i = i/2
 
-            else:
-                i = (3*i) + 1
-        print(round(myi), " converged")
+    #         else:
+    #             i = (3*i) + 1
+    #     print(round(myi), " converged")
 
 
 
