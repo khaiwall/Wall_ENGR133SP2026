@@ -75,15 +75,15 @@ def loop_find(type):
             count+=1
             
 def loop_through_feature(ftr):
-    count = 1
+    count = 0
     for thing in data[:,0]:
         if(thing == ftr):
-            end = data[count,4]
-            e = int(end)
-            print(e)
+            end = int((data[count,4]))
+            print(end)
+            e = end
             print("---")
-            for i in range(count, count+e):
-                print(data[count+i-1,3])
+            for i in range(count, count + e):
+                print(data[i,3])
         count+=1
 def main():
  
@@ -94,7 +94,7 @@ def main():
         loop_find("Feature")
         print("----------------")
         feature = print("Please select feature: ___")
-        feature = "Ear lobe"
+        feature = "Eye color"
         loop_through_feature(feature)
 
 
