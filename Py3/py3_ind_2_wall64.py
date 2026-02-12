@@ -3,10 +3,10 @@ Course Number: ENGR 13300
 Semester: Spring 2026
 
 Description:
-    Replace this line with a description of your program.
+    We need to evaluate the integral from a to b of sin(x)/x, which does not have an elementary anti-derivative. Instead, we are using the Mclaren series which allow us to approximate the value of sin(x)/x, and then using a summation to act as an integral
 
 Assignment Information:
-    Assignment:     Py ind 2
+    Assignment:     py3 ind 2
     Team ID:        LC1 - 03 (e.g. LC1 - 01; for section LC1, team 01)
     Author:         Khai, wall4@purdue.edu
     Date:           2/10/2026 
@@ -39,20 +39,39 @@ import numpy as np
 def main():
     a = float(input("Enter the lower limit of integration: "))
     b = float(input("Enter the upper limit of integration: "))
-    d = int``(input("Enter the number of decimal places for convergence: "))
+    d = int(input("Enter the number of decimal places for convergence: "))
     n = int(input("Enter the maximum number of terms: "))
-
+    print("")
+    print("Approximations:")
     si = 0.0
+    newSi = 0.0
+    count = 0
+    endPoint = 0
 
-    if n > 0:
+
+    if (n > 0 and d > 0): ##checking if input values are valid
         for i in range(n):
-            si += ((-1**i)*(b**(2*i+1)) - (a**(2*i+1)))/ ((2*i+1)*m.factorial(2*i+1))
-            print(f"n = {i}: sum = {si:.{d}f}") 
+            newSi = si #Here we are storing the "old value" of the summation which we will compare to the new value later
+            if (count < 2): #if the decimals have matched enough times (count is great enough) then we will not evaluate the sum
+               
+                si += ((-1)**i)*(((b**(2*i+1)) - (a**(2*i+1))) / ((2*i+1)*m.factorial(2*i+1)))
+                print(f"n = {i}: sum = {round(si,d)}")
+                endPoint+=1
+            if (round(newSi,d) == round(si,d)): ##here we are comparing the old and new values. If they are equal (the decimals are the same) then we add 1 to count.
+                count+=1
+               
 
+        if (count < 2):
+            print(f"Error: The approximation did not converge to {d} decimal places with only {n} terms.")
+        else:
+            print(f"The integral from {a} to {b} is estimated to be {si:.{d}f}.")
+            print(f"Total number of terms: {endPoint}")
+            
 
-
-    """Write your code here (and delete this line)."""
+    else:
+        print("Error: Input a positive integer")
 
 
 if __name__ == "__main__":
     main()
+#you need 133 characters of comments? I gotchu...
