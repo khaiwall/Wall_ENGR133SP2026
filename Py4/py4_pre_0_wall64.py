@@ -36,6 +36,7 @@ Academic Integrity Statement:
 import csv
 import pandas as p
 import matplotlib.pyplot as plt
+import matplotlib.pyplot as pls
 def main():
     
 
@@ -48,14 +49,17 @@ def main():
     
     df_Volume.to_csv("py4_pre_0_wall64.csv", index = False, header = False)
 
-    plt.subplot(1,1,1)
+    
+    plt.subplot(1,2,1)
+    
     plt.plot(df[0], df[2], 'bo-', label='Price')
     plt.title("Stock Price vs Time")
     plt.legend()
     plt.grid()
     plt.xlabel("Time (days)")
     plt.ylabel("Price (USD)")
-    plt.subplot(1,2,1)
+    
+    plt.subplot(1,2,2)
     plt.bar(df_Volume[0], df_Volume[1], color = 'red', label ='Dollar Volume')
     plt.ylim(0, 3000)
     plt.title("Dollar Volume vs Time")
@@ -63,8 +67,8 @@ def main():
     plt.grid()
     plt.xlabel("Time (days)")
     plt.ylabel("Volume (USD)")
+    plt.tight_layout()
     plt.show()
-
 
     """Write your code here (and delete this line)."""
 
