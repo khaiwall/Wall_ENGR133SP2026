@@ -6,7 +6,7 @@ Description:
     Replace this line with a description of your program.
 
 Assignment Information:
-    Assignment:     py 4 pre 0
+    Assignment:     py4 pre 0
     Team ID:        LC1 - 03 (e.g. LC1 - 01; for section LC1, team 01)
     Author:         Khai, wall64@purdue.edu
     Date:           02/14/2026
@@ -33,42 +33,62 @@ Academic Integrity Statement:
 
 """ Write any import statements here (and delete this line)."""
 
-import csv
 import pandas as p
 import matplotlib.pyplot as plt
-import matplotlib.pyplot as pls
 def main():
     
 
-    df = p.read_csv("Py4\py4_pre_0_data.csv", header=None)
+    # df = p.read_csv("Py4\py4_pre_0_data.csv", header=None)
+    df = p.read_csv("py4_pre_0_data.csv", header=None)
 
     df_Volume = p.DataFrame()
     df_Volume[0] = df[0]
-    df_Volume[1] = df[1] * df[2] 
+    df_Volume[1] = round((df[1] * df[2]) + 0.01, 1) ##ensures it matches the formatting
     
     
     df_Volume.to_csv("py4_pre_0_wall64.csv", index = False, header = False)
 
+
+    fig, ax = plt.subplots(1,2)
+    fig.suptitle("Financial Data Analysis")
+    ax[0].plot(df[0],df[2], 'bo-', label='Price')
+    ax[0].grid()
+    ax[0].legend()
+    ax[0].set_title("Stock Price vs Time")
+    ax[0].set_xlabel("Time (days)")
+    ax[0].set_ylabel("Price (USD)")
     
-    plt.subplot(1,2,1)
     
-    plt.plot(df[0], df[2], 'bo-', label='Price')
-    plt.title("Stock Price vs Time")
-    plt.legend()
-    plt.grid()
-    plt.xlabel("Time (days)")
-    plt.ylabel("Price (USD)")
+    ax[1].bar(df_Volume[0],df_Volume[1],color = 'red', label = 'Dollar Volume')
+    ax[1].grid()
+    ax[1].set_ylim(0, 3000)
+    ax[1].set_title("Dollar Volume vs Time")
+    ax[1].set_xlabel("Time (days)")
+    ax[1].set_ylabel("Volume (USD)")
+    ax[1].legend()
+ 
+    fig.tight_layout()
+    plt.show(block=True)
+
+    # plt.subplot(1,2,1)
     
-    plt.subplot(1,2,2)
-    plt.bar(df_Volume[0], df_Volume[1], color = 'red', label ='Dollar Volume')
-    plt.ylim(0, 3000)
-    plt.title("Dollar Volume vs Time")
-    plt.legend()
-    plt.grid()
-    plt.xlabel("Time (days)")
-    plt.ylabel("Volume (USD)")
-    plt.tight_layout()
-    plt.show()
+    # plt.plot(df[0], df[2], 'bo-', label='Price')
+    # plt.title("Stock Price vs Time")
+    # plt.legend()
+    # plt.grid()
+    # plt.xlabel("Time (days)")
+    # plt.ylabel("Price (USD)")
+    
+    # plt.subplot(1,2,2)
+    # plt.bar(df_Volume[0], df_Volume[1], color = 'red', label ='Dollar Volume')
+    # plt.ylim(0, 3000)
+    # plt.title("Dollar Volume vs Time")
+    # plt.legend()
+    # plt.grid()
+    # plt.xlabel("Time (days)")
+    # plt.ylabel("Volume (USD)")
+    # plt.tight_layout()
+    # plt.show()
 
     """Write your code here (and delete this line)."""
 
