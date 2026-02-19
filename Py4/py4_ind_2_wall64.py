@@ -6,10 +6,10 @@ Description:
     Build an n-gram frequency model based on data from other files
 
 Assignment Information:
-    Assignment:     py4 ind 1 
+    Assignment:     py4 ind 2 
     Team ID:        LC1 - 03
     Author:         Khai, wall64@purdue.edu
-    Date:           02/17/2026
+    Date:           02/19/2026
 
 Contributors:
     Name, login@purdue [repeat for each]
@@ -37,16 +37,16 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import re
 import csv
+import os
 
 
 def load_samples():
 
 
 
-    path = Path("Py4/sample_texts")
-    # path = Path("sample_texts")
+    path = Path("Py4/unknown_texts")
     files = list(path.iterdir())
-    nameList = ["dutch", "english", "french", "german", "italian", "spanish"]
+    nameList = ["unknown1", "unknown2", "unknown3"]
 
     samples = {}
     for i, file_path in enumerate(files):
@@ -68,12 +68,27 @@ def clean_text(currentSample):
         cleanSample[language] = (cleaned)
 
     return cleanSample
-# def normalize_n_gram(oldGram):
-#     reducedGrams = {}
-#     for language, ngram_dict in oldGram.items():
-#         total = sum(ngram_dict.values())
-#         reducedGrams[language] = {gram: count / total for gram, count in ngram_dict.items()} 
-#     return(reducedGrams)
+
+
+
+def create_n_gram(n, name, currentTexts):
+   
+    if isinstance(currentTexts, dict):
+        if name not in currentTexts:
+            raise ValueError(f"Language '{name}' not found in input")
+        text = currentTexts[name]
+    else:
+        text = currentTexts
+
+    ngrams = {}
+    for i in range(len(text) - n + 1):
+        gram = text[i:i+n]
+        ngrams[gram] = ngrams.get(gram, 0) + 1
+
+    return ngrams
+
+
+
 
 
 def normalize_n_gram(oldGram):
@@ -87,20 +102,11 @@ def normalize_n_gram(oldGram):
     else:
         total = sum(oldGram.values())
         return {gram: count / total for gram, count in oldGram.items()}
+    
 
-def main():
-    n = int(input("Enter the n-gram size to plot (1-5): "))
-    grams = {}
-    samples = load_samples()
-    cleanSamples = clean_text(samples)
- 
-    for language, text in cleanSamples.items():
-        grams[language] = create_n_gram(n, language, text) 
-    normalGrams = normalize_n_gram(grams)
-    plot_top_k(normalGrams, n, 10)
 
-#CSV processing
-
+def all_n_grams(cleanSamples):
+    
     all_ngrams_per_language = {}
 
     for language, text in cleanSamples.items():
@@ -110,6 +116,10 @@ def main():
             normalized = normalize_n_gram({language: ngram_dict})
             all_ngrams_per_language[language][n] = normalized[language]
 
+
+
+
+
     for language, ngram_data in all_ngrams_per_language.items():
         filename = f"py4_ind_1_{language}.csv"
         
@@ -118,71 +128,48 @@ def main():
             # writer.writerow(['n', 'n-gram', 'frequency'])  # header
             
             for n in range(1, 6):
+
                 ngrams = ngram_data[n]
                 for gram_tuple, freq in ngrams.items():
                     gram_str = ''.join(gram_tuple)
                     writer.writerow([n, gram_str, freq])
-        
 
-def create_n_gram(n, name, currentTexts):
-   
-    if isinstance(currentTexts, dict):
-        if name not in currentTexts:
-            raise ValueError(f"Language '{name}' not found in input")
-        text = currentTexts[name]
-    else:
-        text = currentTexts
+def load_from_csv():
+    
 
-    ngrams = {}
-    for i in range(len(text) - n + 1):
-        gram = text[i:i+n]  # slice as string
-        ngrams[gram] = ngrams.get(gram, 0) + 1
+    folder_path = Path("Py4csvs")
+    nameList = ["dutch", "english", "french", "german", "italian", "spanish"]
 
-    return ngrams
+    data_dict = {}
+    count =0
 
-def plot_top_k(models, n, k=10):
-    fig, axs = plt.subplots(2, 3, figsize=(15, 10))
+    for filename in os.listdir(folder_path):
+        if filename.endswith(".csv"):
+            full_path = os.path.join(folder_path, filename)
 
+            with open(full_path, "r", newline="") as file:
+                reader = csv.reader(file)
+                data = list(reader)
+                
+                key = nameList[count]
+                data_dict[key] = data
+            count +=1
 
-    row = 0
-    col = 0
-
-    for language in models:
-        ax = axs[row][col]
-
-        n_gram = models[language]
-
-        # TODO :
-
-        sorted_list = sorted(n_gram.items(), key=lambda item: item[1], reverse=True)
-        top_ngrams = sorted_list[:k] # get the top k n-grams
-
-        grams = []
-        freqs = []
-
-        for gram, freq in top_ngrams:
-            grams.append(''.join(gram))
-            freqs = [freq for g, freq in top_ngrams]
-
-
-        ax.bar(grams, freqs)
-        # TODO :
-        ax.set_ylabel("frequency")
-        ax.set_xlabel(f"{n}-grams")
-        ax.set_title(language)
-        ax.tick_params(axis="x", rotation=45)
-
-        col += 1
-        # move to next row after 3 columns
-        if col == 3:
-            col = 0
-            row += 1
-
-    plt.tight_layout()
-    # plt.show()
+    return(data_dict)    
+    
 
 
 
+
+def main():
+    samples = load_samples()
+    cleanSamples = clean_text(samples)
+    all_n_grams(cleanSamples)
+    language_csvs = load_from_csv()
+    # print(language_csvs["english"])
+
+
+    
 
     
 if __name__ == "__main__":
