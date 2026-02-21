@@ -40,13 +40,14 @@ import csv
 import os
 
 
-def load_samples():
+def create_models():
 
 
 
     path = Path("Py4/unknown_texts")
+    # path = Path("unknown_texts")
     files = list(path.iterdir())
-    nameList = ["unknown1", "unknown2", "unknown3"]
+    nameList = ["unknown_1", "unknown_2", "unknown_3"]
 
     samples = {}
     for i, file_path in enumerate(files):
@@ -54,7 +55,6 @@ def load_samples():
             samples[nameList[i]] = f.read()
     
     return samples
-
 
 
 
@@ -109,67 +109,130 @@ def all_n_grams(cleanSamples):
     
     all_ngrams_per_language = {}
 
-    for language, text in cleanSamples.items():
-        all_ngrams_per_language[language] = {}
+    for name, text in cleanSamples.items():
+        all_ngrams_per_language[name] = {}
         for n in range(1, 6):
-            ngram_dict = create_n_gram(n, language, text)
-            normalized = normalize_n_gram({language: ngram_dict})
-            all_ngrams_per_language[language][n] = normalized[language]
+            ngram_dict = create_n_gram(n, name, text)
+            normalized = normalize_n_gram({name: ngram_dict})
+            all_ngrams_per_language[name][n] = normalized[name]
+    return all_ngrams_per_language
 
-
-
-
-
-    for language, ngram_data in all_ngrams_per_language.items():
-        filename = f"py4_ind_1_{language}.csv"
-        
-        with open(filename, mode='w', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
-            # writer.writerow(['n', 'n-gram', 'frequency'])  # header
-            
-            for n in range(1, 6):
-
-                ngrams = ngram_data[n]
-                for gram_tuple, freq in ngrams.items():
-                    gram_str = ''.join(gram_tuple)
-                    writer.writerow([n, gram_str, freq])
 
 def load_from_csv():
-    
-
     folder_path = Path("Py4csvs")
     nameList = ["dutch", "english", "french", "german", "italian", "spanish"]
 
     data_dict = {}
-    count =0
-
-    for filename in os.listdir(folder_path):
+    for count, filename in enumerate(os.listdir(folder_path)):
         if filename.endswith(".csv"):
-            full_path = os.path.join(folder_path, filename)
-
+            full_path = folder_path / filename
+            data_dict[nameList[count]] = {}
             with open(full_path, "r", newline="") as file:
                 reader = csv.reader(file)
-                data = list(reader)
-                
-                key = nameList[count]
-                data_dict[key] = data
-            count +=1
+                for row in reader:
+                    n = int(row[0])
+                    gram = row[1]
+                    freq = float(row[2])
+                    if n not in data_dict[nameList[count]]:
+                        data_dict[nameList[count]][n] = {}
+                    data_dict[nameList[count]][n][gram] = freq
+    return data_dict
 
-    return(data_dict)    
-    
+def n_gram_dist(language, unknown, n):
+    total_diff = 0
+    lang_ngrams = language.get(n, {})
+    unk_ngrams = unknown.get(n, {})
+    all_grams = set(lang_ngrams.keys()) | set(unk_ngrams.keys())
+    for gram in all_grams:
+        total_diff += abs(lang_ngrams.get(gram, 0) - unk_ngrams.get(gram, 0))
+    return total_diff
 
+def score_language(languages, unknown, n):
+    scores = {}
+    for lang_name, lang_dict in languages.items():
+        scores[lang_name] = n_gram_dist(lang_dict, unknown, n)
 
+    return scores
 
+def score_separation(distance_scores):
+    separation_scores = {}
+    languages = list(distance_scores.keys())
+    n = len(languages)
+
+    for lang in languages:
+        lang_score = distance_scores[lang]
+        # Sum of absolute differences with all other languages
+        total_diff = sum(abs(lang_score - distance_scores[other_lang]) 
+                         for other_lang in languages if other_lang != lang)
+        # Divide by (n - 1) as per formula
+        separation_scores[lang] = total_diff / (n - 1)
+    print(separation_scores)
+    return separation_scores
 
 def main():
-    samples = load_samples()
-    cleanSamples = clean_text(samples)
-    all_n_grams(cleanSamples)
+    unknown_samples = create_models()
+    unknownCleanSamples = clean_text(unknown_samples)
+    unknownGrams = all_n_grams(unknownCleanSamples)
     language_csvs = load_from_csv()
-    # print(language_csvs["english"])
+    counters = 0
+    print("Unknown Language File Options\n")
+
+    for name, text in unknownGrams.items():
+        counters +=1
+        print(f"{counters}. {name:<5}")
+
+    currentFile = input("Select a file to analyize: ")
+    scores_by_n = {}
+
+    for n in range(1, 6):
+        # compute distance scores for this n
+        distance_scores = score_language(language_csvs, unknownGrams[currentFile], n)
+        # compute separation for this n
+        separation_scores = score_separation(distance_scores)
+        # store in dictionary by n
+        scores_by_n[str(n)] = separation_scores
+
+    plot_separation_vs_n(scores_by_n, currentFile)
 
 
-    
+
+
+import matplotlib.pyplot as plt
+
+def plot_separation_vs_n(scores_by_n, name):
+    fig, axs = plt.subplots(2, 3, figsize=(15, 10), sharey=True)
+
+    n_values = sorted([int(n) for n in scores_by_n.keys()])
+
+    # languages from the first n entry (assumes all n have same languages)
+    first_n = str(n_values[0])
+    languages = sorted(scores_by_n[first_n].keys())
+
+    row = 0
+    col = 0
+
+    for language in languages:
+        ax = axs[row][col]
+
+        # collect y-values (scores) in order of n
+        y_scores = [scores_by_n[str(n)][language] for n in n_values]
+
+        # plot n_values (x) vs y_scores (y)
+        ax.plot(n_values, y_scores, 'bo-', label=language)
+
+        ax.set_xticks(n_values)
+        ax.set_xlabel("n-gram size (n)")
+        ax.set_ylabel("Separation Score")
+        ax.set_title(language)
+
+        col += 1
+        if col == 3:
+            col = 0
+            row += 1
+
+    plt.suptitle(f"{name} Language Separation", fontsize=16)
+    plt.tight_layout()
+    plt.show()
 
     
 if __name__ == "__main__":
