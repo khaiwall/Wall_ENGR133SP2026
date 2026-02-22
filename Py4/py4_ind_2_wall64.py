@@ -39,7 +39,6 @@ import re
 import csv
 import os
 
-
 def create_models():
 
 
@@ -47,12 +46,15 @@ def create_models():
     path = Path("Py4/unknown_texts")
     # path = Path("unknown_texts")
     files = list(path.iterdir())
+    # files = ["sample_unknown_1.txt", "sample_unknown_2.txt", "sample_unknown_3.txt"]
     nameList = ["unknown_1", "unknown_2", "unknown_3"]
 
     samples = {}
-    for i, file_path in enumerate(files):
+    counting = 0
+    for file_path in files:
         with open(file_path, 'r', encoding='utf-8') as f:
-            samples[nameList[i]] = f.read()
+            samples[nameList[counting]] = f.read()
+        counting+=1
     
     return samples
 
@@ -138,19 +140,31 @@ def load_from_csv():
                     data_dict[nameList[count]][n][gram] = freq
     return data_dict
 
-def n_gram_dist(language, unknown, n):
+# def n_gram_dist(language, unknown, n):
+#     total_diff = 0
+#     lang_ngrams = language.get(n, {})
+#     unk_ngrams = unknown.get(n, {})
+#     all_grams = set(lang_ngrams.keys()) | set(unk_ngrams.keys())
+#     for gram in all_grams:
+#         total_diff += abs(lang_ngrams.get(gram, 0) - unk_ngrams.get(gram, 0))
+#     return total_diff
+
+def n_gram_dist(language, unknown):
     total_diff = 0
-    lang_ngrams = language.get(n, {})
-    unk_ngrams = unknown.get(n, {})
-    all_grams = set(lang_ngrams.keys()) | set(unk_ngrams.keys())
+
+    all_grams = set(language.keys()) | set(unknown.keys())
+
     for gram in all_grams:
-        total_diff += abs(lang_ngrams.get(gram, 0) - unk_ngrams.get(gram, 0))
+        total_diff += abs(language.get(gram, 0) - unknown.get(gram, 0))
+        
+
     return total_diff
 
 def score_language(languages, unknown, n):
     scores = {}
     for lang_name, lang_dict in languages.items():
-        scores[lang_name] = n_gram_dist(lang_dict, unknown, n)
+        # scores[lang_name] = n_gram_dist(lang_dict, unknown, n)
+        scores[lang_name] = n_gram_dist(lang_dict[n], unknown[n])
 
     return scores
 
@@ -161,12 +175,9 @@ def score_separation(distance_scores):
 
     for lang in languages:
         lang_score = distance_scores[lang]
-        # Sum of absolute differences with all other languages
         total_diff = sum(abs(lang_score - distance_scores[other_lang]) 
                          for other_lang in languages if other_lang != lang)
-        # Divide by (n - 1) as per formula
         separation_scores[lang] = total_diff / (n - 1)
-    print(separation_scores)
     return separation_scores
 
 def main():
@@ -181,7 +192,13 @@ def main():
         counters +=1
         print(f"{counters}. {name:<5}")
 
-    currentFile = input("Select a file to analyize: ")
+    # currentFile = input("Select a file to analyize: ")
+    currentFile = "unknown_1"
+
+    
+    best_overall = None
+    best_n = None
+    best_language = None
     scores_by_n = {}
 
     for n in range(1, 6):
@@ -191,6 +208,18 @@ def main():
         separation_scores = score_separation(distance_scores)
         # store in dictionary by n
         scores_by_n[str(n)] = separation_scores
+        
+        best_lang_this_n = max(separation_scores, key=separation_scores.get)
+        best_score_this_n = separation_scores[best_lang_this_n]
+
+        if best_overall is None or best_score_this_n > best_overall:
+            best_overall = best_score_this_n
+            best_n = n
+            best_language = best_lang_this_n
+            
+    print(f"\nThe best language match for {currentFile} is the {best_n}-gram {best_language} model.")
+
+
 
     plot_separation_vs_n(scores_by_n, currentFile)
 
