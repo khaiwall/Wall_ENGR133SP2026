@@ -38,23 +38,41 @@ from PIL import ImageOps
 from pathlib import Path
 import os
 
-def open_image():
-    these_images = []
-    path = Path("Py5/images")
-    files = list(path.iterdir())
-    count = 0
-    for images in files:
+def load_image(images):
 
-        print(f"{count +1}. {os.path.basename(images)}")
-        opened_image = Image.open(images)
-        img_array = np.array(opened_image)
-        these_images.append(img_array)
+    opened_image = Image.open("Py5/images/" + images)
+    img_array = np.array(opened_image)
+    print("Image loaded")
+    return img_array
+
+
+def display():
+    count = 0
+    strings = ["spongebob.jpg", "grayscale_landscape.jpeg", "landscape.jpeg"]   
+    for string in strings:
+        print(f"{count+1}. {string}")
         count +=1
-    return these_images
-       
+    return strings
+
 def main():
-    my_images = open_image()
-    selcted_Image = input("Select an image (q to quit): ")
+    go = True
+    while go:
+        
+        strings = display()
+        selcted_Image = input("Select an image (q to quit): ")
+        if selcted_Image == "q":
+            go = False
+        else:
+            try:
+                thisImage = int(selcted_Image)-1
+                new_image = load_image(strings[thisImage])
+            except ValueError:
+                print("Invalid choice please try again.\n")
+
+            
+
+
+    
 
 
 
