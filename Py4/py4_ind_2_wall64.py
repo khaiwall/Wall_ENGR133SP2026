@@ -43,10 +43,10 @@ def create_models():
 
 
 
-    path = Path("Py4/unknown_texts")
+    # path = Path("Py4/unknown_texts")
     # path = Path("unknown_texts")
-    files = list(path.iterdir())
-    # files = ["sample_unknown_1.txt", "sample_unknown_2.txt", "sample_unknown_3.txt"]
+    # files = list(path.iterdir())
+    files = ["sample_unknown_1.txt", "sample_unknown_2.txt", "sample_unknown_3.txt"]
     nameList = ["unknown_1", "unknown_2", "unknown_3"]
 
     samples = {}
@@ -192,7 +192,7 @@ def main():
         counters +=1
         print(f"{counters}. {name:<5}")
 
-    # currentFile = input("Select a file to analyize: ")
+    currentFile = input("Select a file to analyize: ")
     currentFile = "unknown_1"
 
     
