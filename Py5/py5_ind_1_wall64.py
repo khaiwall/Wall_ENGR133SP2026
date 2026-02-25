@@ -38,14 +38,6 @@ from PIL import ImageOps
 from pathlib import Path
 import os
 
-def load_image(images):
-
-    opened_image = Image.open("Py5/images/" + images)
-    img_array = np.array(opened_image)
-    print("Image loaded")
-    return img_array
-
-
 def display():
     count = 0
     strings = ["spongebob.jpg", "grayscale_landscape.jpeg", "landscape.jpeg"]   
@@ -53,6 +45,33 @@ def display():
         print(f"{count+1}. {string}")
         count +=1
     return strings
+def load_image(images):
+
+    opened_image = Image.open("Py5/images/" + images).convert("RGB")
+
+    img_array = np.array(opened_image)
+    if img_array.dtype == np.uint8:
+        norm_img_array = img_array/255
+        
+        return norm_img_array            
+    else:
+        print("Image is not 8-bit.")
+
+def linearize_image(image):
+    linear = np.where(
+        image <= 0.04045,
+        image / 12.92,
+        ((image + 0.055) / 1.055) ** 2.4
+    )
+    return linear
+
+
+def calculate_luminance(image):
+    R = np.average(image[:,:,0])
+    G = np.average(image[:,:,1])
+    B = np.average(image[:,:,2])
+    Y = 0.2126*R + 0.7152*G + 0.0722*B
+    print(f"The average luminance of the image: {Y:.3`f}")
 
 def main():
     go = True
@@ -66,15 +85,11 @@ def main():
             try:
                 thisImage = int(selcted_Image)-1
                 new_image = load_image(strings[thisImage])
+                lin_image = linearize_image(new_image)
+                luminance = calculate_luminance(lin_image)
+                
             except ValueError:
                 print("Invalid choice please try again.\n")
-
-            
-
-
-    
-
-
 
 
 
