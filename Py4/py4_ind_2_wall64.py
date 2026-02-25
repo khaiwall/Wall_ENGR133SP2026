@@ -44,7 +44,7 @@ def create_models():
 
 
     # path = Path("Py4/unknown_texts")
-    # path = Path("unknown_texts")
+    path = Path("unknown_texts")
     # files = list(path.iterdir())
     files = ["sample_unknown_1.txt", "sample_unknown_2.txt", "sample_unknown_3.txt"]
     nameList = ["unknown_1", "unknown_2", "unknown_3"]
@@ -52,7 +52,7 @@ def create_models():
     samples = {}
     counting = 0
     for file_path in files:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(path / file_path, 'r', encoding='utf-8') as f:
             samples[nameList[counting]] = f.read()
         counting+=1
     
