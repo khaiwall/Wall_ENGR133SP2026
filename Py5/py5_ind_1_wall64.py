@@ -125,6 +125,7 @@ def main():
             thisImage = int(selected_Image)-1
             new_image = load_image("images/" + strings[thisImage])
             # new_image = load_image(strings[thisImage])
+            new_image = load_image(strings[thisImage])
             lin_image = linearize_image(new_image)
             luminance = calculate_luminance(lin_image)
             plot_pixel_intensity(lin_image)
